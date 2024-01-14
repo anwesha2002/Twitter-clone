@@ -20,7 +20,7 @@ export function Sidenav(){
                     </IconHoverEffect>
                 </Link></li>
                 {(user) &&
-                    <li><Link href={`/profile/${user.id}`}>
+                    <li><Link href={`/profiles/${user.id}`}>
                         <IconHoverEffect>
                         <span className="flex gap-4 items-center">
                             <VscAccount className="w-8 h-8 "/>

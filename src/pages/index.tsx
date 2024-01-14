@@ -25,9 +25,27 @@ export default function Home() {
                })}</div>
            )
        }
-       <RecentTweet/>
+       {selectedTabs === "Recent" ? <RecentTweet/> : <FollowingTweets/>}
    </>
   );
+}
+
+
+function FollowingTweets(){
+    const tweets = api.tweet.InfiniteFeed.useInfiniteQuery(
+        {onlyFollowings: true},
+        {getNextPageParam : (lastPage) => lastPage.nextCursor}
+    )
+
+    return(
+        <InfiniteTweetList
+            tweets={tweets.data?.pages.flatMap(data=>data.tweets)}
+            isError={tweets.isError}
+            isLoading={tweets.isLoading}
+            hasMore={tweets.hasNextPage}
+            fetchNewTweets={tweets.fetchNextPage}
+        />
+    )
 }
 
 function RecentTweet(){
