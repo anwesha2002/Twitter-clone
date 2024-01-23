@@ -81,6 +81,8 @@ function TweetCard({id, content, createdAt, likesCount, likedByMe, user} : Tweet
         }
 
         TrpcUtils.tweet.InfiniteFeed.setInfiniteData({}, updatedData)
+        TrpcUtils.tweet.InfiniteFeed.setInfiniteData({ onlyFollowings: true }, updatedData)
+        TrpcUtils.tweet.InfiniteProfileFeed.setInfiniteData({ userId: user.id }, updatedData)
     }})
 
     function handleToggleLikes(){

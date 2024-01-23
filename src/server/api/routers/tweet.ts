@@ -10,6 +10,22 @@ import {Prisma} from ".prisma/client";
 import {inferAsyncReturnType} from "@trpc/server";
 
 export const tweetRouter = createTRPCRouter({
+  InfiniteProfileFeed : publicProcedure.input(z.object({
+      limit : z.number().optional(),
+      cursor : z.object({id : z.string(), createdAt : z.date()}).optional(),
+      userId : z.string()
+  })).query(
+      async ({ ctx, input : {limit = 10, cursor, userId} }) => {
+          const currentUserId  = ctx.session?.user.id
+
+          return await GetInfiniteTweet({
+              limit,
+              cursor,
+              ctx,
+              whereClause: { userId}
+          })
+      }
+  ),
   InfiniteFeed : publicProcedure
       .input(z.object({
           onlyFollowings : z.boolean().optional(),
@@ -43,6 +59,8 @@ export const tweetRouter = createTRPCRouter({
       const tweet =  await ctx.db.tweet.create({
         data : {content, userId : ctx.session.user.id}
       })
+
+        void ctx.revalidateSSG?.(`/profiles/${ctx.session.user.id}`)
 
       return tweet
     }),

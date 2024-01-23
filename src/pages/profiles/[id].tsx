@@ -7,11 +7,39 @@ import {IconHoverEffect} from "~/Component/IconHoverEffect";
 import {VscArrowLeft} from "react-icons/vsc";
 import Link from "next/link";
 import {ProfileImage} from "~/Component/ProfileImage";
+import {InfiniteTweetList} from "~/Component/InfiniteTweetList";
+import {Button} from "~/Component/Button";
+import {useSession} from "next-auth/react";
 
 
 const ProfilePages : NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({id}) => {
 
     const {data : profile} = api.profile.getById.useQuery({id})
+    const tweets = api.tweet.InfiniteProfileFeed.useInfiniteQuery(
+        {userId: id},
+        { getNextPageParam : (lastPage) => lastPage.nextCursor}
+    )
+    const trpcUtils = api.useUtils()
+
+    const toggleFollow = api.profile.toggleFollow.useMutation({
+        onSuccess : ({addedFollower}) => {
+            const updateData : Parameters<typeof trpcUtils.profile.getById.setData>[1] = ( olddata ) =>{
+
+                const countModifier = addedFollower ? +1 : -1
+
+                if(olddata == null) return
+
+                return{
+                    ...olddata,
+                    isFollowing : addedFollower,
+                    followersCount : olddata.followersCount + countModifier
+                }
+
+            }
+
+            trpcUtils.profile.getById.setData({id}, updateData)
+        }
+    })
 
     if(profile == null || profile.name === null) return <ErrorPage statusCode={404}/>
 
@@ -21,7 +49,7 @@ const ProfilePages : NextPage<InferGetStaticPropsType<typeof getStaticProps>> = 
             <Head>
                 <title>{`Twitter clone - ${profile.name}`}</title>
             </Head>
-            <header className="sticky top-0 flex items-center border-b bg-white px-4 py-2">
+            <header className="sticky z-10 top-0 flex items-center border-b bg-white px-4 py-2">
                 <Link href=".." className="mr-2">
                     <IconHoverEffect>
                         <VscArrowLeft className="w-6 h-6"/>
@@ -38,8 +66,35 @@ const ProfilePages : NextPage<InferGetStaticPropsType<typeof getStaticProps>> = 
                         {profile.followCount}{" "} Following
                     </div>
                 </div>
+                <FollowButton
+                    isFollowing={profile.isFollowing}
+                    userId={id}
+                    onClick={()=> {
+                        toggleFollow.mutate({userId : id})
+                    }}
+                    isLoading ={toggleFollow.isLoading}
+                />
+
             </header>
-        </>
+            <InfiniteTweetList
+                tweets={tweets.data?.pages.flatMap(data=>data.tweets)}
+                isLoading={tweets.isLoading}
+                isError={tweets.isError}
+                hasMore={tweets.hasNextPage}
+                fetchNewTweets={tweets.fetchNextPage}/>
+            </>
+    )
+}
+
+export function FollowButton({ isFollowing, userId, onClick, isLoading} : {isFollowing : boolean, userId : string, onClick : () => void, isLoading : boolean}){
+        const session = useSession()
+        if( session.status === "unauthenticated" || session.data?.user.id === userId){
+            return null
+        }
+    return(
+        <Button disabled={isLoading} onClick={onClick} small gray={isFollowing}>
+            {isFollowing ? "unfollow" : "Follow"}
+        </Button>
     )
 }
 
