@@ -9,6 +9,11 @@ Welcome to the Twitter Clone project! This application is built using Next.js, T
 - **Like**: Show appreciation for tweets by liking them.
 - **Infinite Tweet Feed**: Scroll endlessly through a dynamically updating tweet feed.
 
+![Twitter clone - Google Chrome 2024-01-25 06-20-43](https://github.com/anwesha2002/Twitter-clone/assets/116761608/23d0f008-af6f-49cf-b09e-1c7efc6c3666)
+
+![Screenshot 2024-01-25 062249](https://github.com/anwesha2002/Twitter-clone/assets/116761608/26d16398-06be-4277-8e6b-ef51004e683f)
+
+
 ## Technologies Used
 
 - [Next.js](https://nextjs.org/) - A React framework for building web applications.
