@@ -22,8 +22,8 @@ Welcome to the Twitter Clone project! This application is built using Next.js, T
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/twitter-clone.git
-   cd twitter-clone
+   https://github.com/anwesha2002/Twitter-clone.git
+   cd Twitter-clone
    ```
 
 2. **Install Dependencies:**
