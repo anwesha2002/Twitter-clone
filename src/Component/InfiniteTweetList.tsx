@@ -38,7 +38,7 @@ export function InfiniteTweetList({tweets,isError, isLoading, fetchNewTweets, ha
                 hasMore={hasMore}
                 loader={<h4>Loading</h4>}
             >
-                {tweets.map(data=><TweetCard {...data} />)}
+                {tweets.map(data=><TweetCard key={data.id} {...data} />)}
             </InfiniteScroll>
         </ul>
     )
@@ -119,7 +119,7 @@ type heartButtonProps = {
 }
 
 function HeartButton({isLoading, onClick, likedByMe, LikesCount} : heartButtonProps){
-    const HeartIcon = likedByMe ? VscHeartFilled : VscHeart
+    const HeartIcon  = likedByMe ? VscHeartFilled : VscHeart
     const session =useSession()
 
     if(session.status !== "authenticated"){

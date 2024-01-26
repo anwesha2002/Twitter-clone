@@ -39,7 +39,7 @@ function Form(){
             if(session.status !== "authenticated") return
 
             Trlpcutil.tweet.InfiniteFeed.setInfiniteData({}, (oldData) => {
-                if(oldData == null || oldData.pages[0] == null) return
+                if(oldData == null || oldData.pages[0] == null) return;
 
                 const newChachedTweet = {
                     ...newTweet,

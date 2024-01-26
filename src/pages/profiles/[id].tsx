@@ -41,49 +41,52 @@ const ProfilePages : NextPage<InferGetStaticPropsType<typeof getStaticProps>> = 
         }
     })
 
-    if(profile == null || profile.name === null) return <ErrorPage statusCode={404}/>
 
 
-    return (
-        <>
-            <Head>
-                <title>{`Twitter clone - ${profile.name}`}</title>
-            </Head>
-            <header className="sticky z-10 top-0 flex items-center border-b bg-white px-4 py-2">
-                <Link href=".." className="mr-2">
-                    <IconHoverEffect>
-                        <VscArrowLeft className="w-6 h-6"/>
-                    </IconHoverEffect>
-                </Link>
-                <ProfileImage src={profile.image} className="flex-shrink-0"/>
-                <div className="ml-2 flex-grow">
-                    <h1 className="text-lg font-bold">{profile.name}</h1>
-                    <div className="text-gray-500">
-                        {profile.tweetCount}{" "}
-                        {SingularPlural(profile.tweetCount,"Tweet", "Tweets")} - {" "}
-                        {profile.followersCount}{" "}
-                        {SingularPlural(profile.followersCount,"follower", "followers")} - {" "}
-                        {profile.followCount}{" "} Following
+        return(
+        (profile == null || profile?.name == null) ?
+             <ErrorPage statusCode={404}/> :
+
+            <>
+                <Head>
+                    <title>{`Twitter clone - ${profile?.name}`}</title>
+                </Head>
+                <header className="sticky z-10 top-0 flex items-center border-b bg-white px-4 py-2">
+                    <Link href=".." className="mr-2">
+                        <IconHoverEffect>
+                            <VscArrowLeft className="w-6 h-6"/>
+                        </IconHoverEffect>
+                    </Link>
+                    <ProfileImage src={profile?.image} className="flex-shrink-0"/>
+                    <div className="ml-2 flex-grow">
+                        <h1 className="text-lg font-bold">{profile?.name}</h1>
+                        <div className="text-gray-500">
+                            {profile?.tweetCount}{" "}
+                            {SingularPlural(profile?.tweetCount, "Tweet", "Tweets")} - {" "}
+                            {profile?.followersCount}{" "}
+                            {SingularPlural(profile?.followersCount, "follower", "followers")} - {" "}
+                            {profile?.followCount}{" "} Following
+                        </div>
                     </div>
-                </div>
-                <FollowButton
-                    isFollowing={profile.isFollowing}
-                    userId={id}
-                    onClick={()=> {
-                        toggleFollow.mutate({userId : id})
-                    }}
-                    isLoading ={toggleFollow.isLoading}
-                />
+                    <FollowButton
+                        isFollowing={profile?.isFollowing}
+                        userId={id}
+                        onClick={() => {
+                            toggleFollow.mutate({userId: id})
+                        }}
+                        isLoading={toggleFollow.isLoading}
+                    />
 
-            </header>
-            <InfiniteTweetList
-                tweets={tweets.data?.pages.flatMap(data=>data.tweets)}
-                isLoading={tweets.isLoading}
-                isError={tweets.isError}
-                hasMore={tweets.hasNextPage}
-                fetchNewTweets={tweets.fetchNextPage}/>
+                </header>
+                <InfiniteTweetList
+                    tweets={tweets.data?.pages.flatMap(data => data.tweets)}
+                    isLoading={tweets.isLoading}
+                    isError={tweets.isError}
+                    hasMore={tweets.hasNextPage}
+                    fetchNewTweets={tweets.fetchNextPage}/>
             </>
     )
+
 }
 
 export function FollowButton({ isFollowing, userId, onClick, isLoading} : {isFollowing : boolean, userId : string, onClick : () => void, isLoading : boolean}){
@@ -99,7 +102,7 @@ export function FollowButton({ isFollowing, userId, onClick, isLoading} : {isFol
 }
 
 const pluralRules = new Intl.PluralRules
-function SingularPlural(number : number, singular : string, plural : string){
+function SingularPlural(number : number , singular : string, plural : string){
     return pluralRules.select(number) === "one" ? singular : plural
 }
 
